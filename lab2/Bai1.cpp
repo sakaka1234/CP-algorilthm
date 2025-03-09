@@ -166,8 +166,11 @@ int main(){
 
     cout << "\nWriting to file...\n";
     list.writeToFile();
+<<<<<<< HEAD
     list.addNewstudent("Tran Thien Phuc",13,12,2005,9,9,9);
     list.output();
+=======
+>>>>>>> fa67a0d12b88f728498a3cbbdb8c7c2cf2abf35a
 
     return 0;
 
