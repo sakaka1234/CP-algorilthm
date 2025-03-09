@@ -139,28 +139,50 @@ public:
 int main() {
     Polynomial poly1, poly2;
 
-    int n1, n2;
-    cout << "Enter number of terms for Polynomial 1: ";
-    cin >> n1;
-    poly1.input(n1);
+    // Đọc từ file Nhapdt.txt vào poly1
+    ifstream inFile("Nhapdt.txt");
+    if (!inFile) {
+        cout << "Cannot open file Nhapdt.txt" << endl;
+        return 1;
+    }
+    poly1.readFile(inFile);
+    inFile.close(); // Đóng file sau khi đọc
 
+    // Hiển thị đa thức đã đọc
+    cout << "Polynomial from file: ";
+    poly1.output();
+
+    // Nhập đa thức thứ hai từ bàn phím
+    int n2;
     cout << "Enter number of terms for Polynomial 2: ";
     cin >> n2;
     poly2.input(n2);
 
-    cout << "Polynomial 1: ";
-    poly1.output();
-
     cout << "Polynomial 2: ";
     poly2.output();
 
+    // Cộng và trừ đa thức
     Polynomial sum = poly1.add(poly2);
+    Polynomial diff = poly1.subtract(poly2);
+
     cout << "Sum of polynomials: ";
     sum.output();
 
-    Polynomial diff = poly1.subtract(poly2);
     cout << "Difference of polynomials: ";
     diff.output();
+
+    // Ghi kết quả vào file output.txt
+    ofstream outFile("output.txt");
+    if (!outFile) {
+        cout << "Cannot write to file output.txt" << endl;
+        return 1;
+    }
+
+    sum.writeFile(outFile);
+    diff.writeFile(outFile);
+    outFile.close(); // Đóng file sau khi ghi
+
+    cout << "Đã ghi kết quả vào output.txt" << endl;
 
     return 0;
 }
