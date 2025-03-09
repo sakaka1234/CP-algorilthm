@@ -10,84 +10,163 @@ struct Student{
     Student *next;
 
 };
-Student *L;
-void input(Student *&A){
-    Student *P,*C;
-    string name;
-    int day, month, year;
-    float mMath;
-    float mPhysic;
-    float mEnglish;
-    char choose;
-    do{
-        P = new Student;
-        cout << "Enter name:" << endl;
-        getline(cin,name);
-        cout << "Enter birthday:" << endl;
-        cin >> day >> month >> year;
-        cout << "Enter points of subjects:" << endl;
-        cin >>mMath >> mPhysic >> mEnglish;
-        P->name = name;
-        P-> day = day; P->month = month; P->year = year;
-        P-> mMath = mMath ; P-> mPhysic = mPhysic; P-> mEnglish = mEnglish;
-        if(A == nullptr){
-            A = P;
-            C = P;
-        }else{
-            C->next = P;
-            C =P;
-        }
-        cout << "Continue ?" << endl;
-        cin >> choose;
-        cin.ignore();
-    }while(choose == 'y' || choose == 'Y');
+class StudentList{
+private:
+    Student *head;
+public:
+    StudentList(){
+        head = nullptr;
 
-}
-void output(Student *&A){
-    Student *P;
-    P = A;
-    while(P != nullptr){
-        cout << P->name << " " << P->day << " / " << P->month
-             << " / " << P->year << " " << P->mMath << " " << P->mPhysic << " " << P->mEnglish << endl;
-        P = P->next;
     }
-}
-Student *TK(int n, Student *&A){
-    Student *P;
-    P = A;
-    int i = 1;
-    while(P != nullptr && i < n){
-        P = P->next;
-        i++;
+    void addNewstudent(string name ,int day , int month ,int year,float math,float physic,float english){
+        Student *newStudent = new Student{name,day,month,year,math,physic,english,head};
+        head = newStudent;
     }
-    return P;
-}
-void add(Student *&A,int n,string name,int day ,int month, int year, float mMath , float mPhysic, float mEnglish){
-    Student *P,*Q;
-    P = new Student;
-    P->name = name;
-    P-> day = day; P->month = month; P->year = year;
-    P-> mMath = mMath ; P-> mPhysic = mPhysic; P-> mEnglish = mEnglish;
-    P->next = nullptr;
-    if(n==1){
-        P->next = A;
-        A = P;    
-    }else{
-        Q = TK(n-1,A);
-        if(Q == nullptr){
-            cout<< "Error" << endl;
-        }else{
-            P->next = Q->next;
-            Q->next = P;
+    void input(int n){
+        for(int i = 0 ; i < n ; i++){
+            string name;
+            int day, month, year;
+            float mMath;
+            float mPhysic;
+            float mEnglish;
+            cout << "Enter name: " << endl;
+            cin.ignore();
+            getline(cin,name);
+            cout << "Enter birth day: " << endl;
+            cin >> day >> month  >> year;
+            cout << "Enter points of 3 subjects  :" << endl;
+            cin >> mMath >> mPhysic >> mEnglish;
+            addNewstudent(name,day,month,year,mMath,mPhysic,mEnglish);
+            cout << "U have entered student: " << i+1 <<endl;
+            cout << "Continue to student:" << i+2 << endl;
+            cin.ignore(); 
+        }
+
+    }
+    void output(){
+        Student *curr = head;
+        if(curr == nullptr){
+            cout << "None students existing" << endl;
+        }
+        while(curr != nullptr){
+            cout << "Name: "<<curr->name << "\nBirthday: " << curr->day << "/" << curr->month << "/" << curr->year
+                 << "\nMath points: " << curr->mMath << " Physic points:" << curr->mPhysic << " English points:" << curr->mEnglish << endl;
+            curr = curr->next; 
         }
     }
-}
-
+    void searchByYear(int year){
+        Student *curr = head;
+        int ans = 0;
+        while(curr != nullptr){
+            if(curr->year == year){
+                ans++;
+            }
+            curr = curr->next;
+        }
+        cout << "Number of student(s) was born in " << year <<":" << ans << endl; 
+    }
+    void existName(string name){
+        Student *curr = head;
+        bool check = false;
+        while(curr != nullptr){
+            if(curr->name == name){
+                check = true;
+                break;
+            }
+            curr = curr->next;
+        }
+        cout << (check == true? "YES": "NO") << endl;
+    }
+    void deleteStudent(string name){
+        Student *curr = head, *prev = nullptr;
+        
+        if (head != nullptr && head->name == name) {
+            Student *temp = head;
+            head = head->next;
+            delete temp;  // Giải phóng bộ nhớ
+            cout << "Deleted student: " << name << endl;
+            return;
+        }
+        
+        while (curr != nullptr && curr->name != name) {
+            prev = curr;
+            curr = curr->next;
+        }
+       
+        if (curr == nullptr) {
+            cout << "Student not found: " << name << endl;
+            return;
+        }
+        
+        prev->next = curr->next;
+        delete curr;  
+        cout << "Deleted student: " << name << endl;
+    }
+    void biggestAverage(){
+        Student *curr = head;
+        if(curr == nullptr){
+            cout << "None student existing" << endl;
+        }
+        float maxAvg = -1.0f;
+        while(curr != nullptr){
+            float currAvg = (curr->mMath + curr->mPhysic + curr->mEnglish)/3.0f;
+            maxAvg = max(maxAvg,currAvg);
+        }
+        curr = head;
+        int i = 0;
+        while(curr != nullptr){
+            float currAvg = (curr->mMath + curr->mPhysic + curr->mEnglish)/3.0f;
+            if(currAvg == maxAvg){
+                cout << "Student"<< i+1 <<":" + curr->name << endl;
+            }
+            curr = curr->next;
+        }
+    }
+    void studentStupidAtMath(){
+        Student *curr = head;
+        if(curr == nullptr){
+            cout << "None student existing" << endl;
+        }
+        int i = 0;
+        while(curr != nullptr){
+            if(curr->mMath < 5){
+                cout << "Student " << i+1 << curr->name << endl;
+            }
+            curr = curr->next;
+        }
+    }
+    void writeToFile(){
+        ofstream file("studentlist.txt");
+        if(!file.is_open()){
+            cout << "Failed to open file" << endl;
+            return;
+        }
+        Student *curr = head;
+        if(curr == nullptr){
+            file << "None student existing" << endl;
+            return;
+        }
+        while(curr != nullptr){
+            file  << "Name: "<<curr->name << "\nBirthday: " << curr->day << "/" << curr->month << "/" << curr->year
+                << "\nMath points: " << curr->mMath << " Physic points:" << curr->mPhysic << " English points:" << curr->mEnglish << endl;
+            curr = curr->next;
+        }
+        file.close();
+    }
+};
 int main(){
-    L = nullptr;
-    input(L);
-    output(L);
-    add(L,2,"Tran Thien Phuc",23,12,2006,10,10,10);
-    cout << "List after adding" << endl;
-    output(L);
+    StudentList list;
+    int n;
+    cout << "Enter number of students: ";
+    cin >> n;
+    list.input(n);
+
+    cout << "\nStudent List:\n";
+    list.output();
+
+    cout << "\nWriting to file...\n";
+    list.writeToFile();
+
+    return 0;
+
 }
